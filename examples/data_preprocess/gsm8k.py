@@ -34,7 +34,8 @@ def extract_solution(solution_str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--local_dir", default="~/data/gsm8k")
+    parser.add_argument("--local_dir", default="/Users/xinranbi/Desktop/verl/data/gsm8k")
+    #parser.add_argument("--local_dir", default="~/data/gsm8k")
     parser.add_argument("--hdfs_dir", default=None)
 
     args = parser.parse_args()
@@ -66,25 +67,25 @@ if __name__ == "__main__":
                     }
                 ],
                 "ability": "math",
-                "reward_model": {"style": "rule", "ground_truth": solution},
-                "extra_info": {
-                    "split": split,
-                    "index": idx,
-                    "answer": answer_raw,
-                    "question": question_raw,
-                },
+                "reward_model": {"style": "rule", "ground_truth": solution}, #对应“是/否”
+                # "extra_info": {
+                #     "split": split,
+                #     "index": idx,
+                #     "answer": answer_raw,
+                #     "question": question_raw,
+                # }, 
             }
             return data
 
         return process_fn
 
-    train_dataset = train_dataset.map(function=make_map_fn("train"), with_indices=True)
+    train_dataset = train_dataset.map(function=make_map_fn("train"), with_indices=True) #什么结构？执行一下
     test_dataset = test_dataset.map(function=make_map_fn("test"), with_indices=True)
 
     local_dir = args.local_dir
     hdfs_dir = args.hdfs_dir
 
-    train_dataset.to_parquet(os.path.join(local_dir, "train.parquet"))
+    train_dataset.to_parquet(os.path.join(local_dir, "train.parquet")) #生成成这种格式
     test_dataset.to_parquet(os.path.join(local_dir, "test.parquet"))
 
     if hdfs_dir is not None:
